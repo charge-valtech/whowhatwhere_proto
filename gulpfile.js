@@ -1,4 +1,5 @@
 var gulp = require('gulp'),
+    connect = require('gulp-connect'),
     plugins = require("gulp-load-plugins")();
 
 function build(stream, file) {
@@ -11,6 +12,18 @@ function build(stream, file) {
     .pipe(plugins.uglify())
     .pipe(gulp.dest('deploy'));
 }
+
+gulp.task('connect', function() {
+  connect.server({
+    root: 'app',
+    livereload: true
+  });
+});
+ 
+gulp.task('html', function () {
+  gulp.src('./app/*.html')
+    .pipe(connect.reload());
+});
 
 gulp.task('build.parallax', function() {
   return build(gulp.src([
@@ -37,7 +50,7 @@ gulp.task('build', ['clean'], function() {
 });
 
 gulp.task('watch', function() {
-  gulp.watch('source/**/*.js', ['build']);
+  gulp.watch('app/*.html', ['html']);
 });
 
-gulp.task('default', ['build']);
+gulp.task('default', ['connect', 'watch']);
